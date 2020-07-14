@@ -42,7 +42,7 @@ functions:
     events:
       - http:
           method: GET
-          path: /prerender
+          path: /prerender/{proxy+}
     layers:
       - { Ref: ChromeLambdaLayer }
 
