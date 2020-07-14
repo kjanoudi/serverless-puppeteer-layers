@@ -21,7 +21,6 @@ module.exports.index = async (event, context) => {
   try {
     const start = process.hrtime();
     const args = chromium.args;
-    console.log(`Starting Puppeteer`, chromium.args);
     args.push(`--user-agent="${userAgent}"`);
     console.log(`Starting Puppeteer`, args);
 
@@ -32,12 +31,6 @@ module.exports.index = async (event, context) => {
       args,
     });
 
-    console.log("event", event);
-    console.log(
-      "event QSP path",
-      event["queryStringParameters"],
-      event["pathParameters"]
-    );
     const url =
       (event["queryStringParameters"] && event["queryStringParameters"].address) ||
       (event["pathParameters"] && event["pathParameters"].proxy);
