@@ -36,9 +36,11 @@ module.exports.index = async (event, context) => {
     console.log(
       "event QSP path",
       event["queryStringParameters"],
-      event["path"]
+      event["pathParameters"]
     );
-    const url = event["queryStringParameters"].address || event["path"];
+    const url =
+      (event["queryStringParameters"] && event["queryStringParameters"].address) ||
+      (event["pathParameters"] && event["pathParameters"].proxy);
     console.log("Fetching", url);
     const page = await browser.newPage();
     const pendingXHR = new PendingXHR(page);
