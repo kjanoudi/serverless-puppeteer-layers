@@ -3,6 +3,8 @@ service: serverless-puppeteer-layers
 provider:
   name: aws
   runtime: nodejs10.x
+  region: us-east-1
+  profile: cheddarup
 
 package:
   exclude:
@@ -35,4 +37,4 @@ functions:
 layers:
   chrome:
     package:
-      artifact: layer/chrome.zip    
+      artifact: layer/chrome.zip
