@@ -1,9 +1,8 @@
-'use strict';
-const chromium = require('chrome-aws-lambda');
+"use strict";
+const chromium = require("chrome-aws-lambda");
 const puppeteer = chromium.puppeteer;
 const { PendingXHR } = require("pending-xhr-puppeteer");
 const userAgent = "prerendercloud-lambda-edge-original-user-agent";
-// const zlib = require("zlib");
 
 const cleanObject = (myObj) =>
   Object.keys(myObj).forEach((key) => myObj[key] == null && delete myObj[key]);
@@ -16,16 +15,6 @@ const elapsedTime = (start) => {
   return { seconds, milliseconds };
 };
 
-// const gzip = (input, options) => {
-//   const promise = new Promise(function (resolve, reject) {
-//     zlib.gzip(input, options, function (error, result) {
-//       if (!error) resolve(result);
-//       else reject(Error(error));
-//     });
-//   });
-//   return promise;
-// }
-
 module.exports.index = async (event, context) => {
   let browser = null;
 
@@ -37,13 +26,19 @@ module.exports.index = async (event, context) => {
     console.log(`Starting Puppeteer`, args);
 
     browser = await puppeteer.launch({
-      defaultViewport:{width:1024,height:800},
+      defaultViewport: { width: 1024, height: 800 },
       headless: true,
       executablePath: await chromium.executablePath,
       args,
     });
 
-    const url = event['queryStringParameters'].address
+    console.log("event", event);
+    console.log(
+      "event QSP path",
+      event["queryStringParameters"],
+      event["path"]
+    );
+    const url = event["queryStringParameters"].address || event["path"];
     console.log("Fetching", url);
     const page = await browser.newPage();
     const pendingXHR = new PendingXHR(page);
@@ -59,13 +54,11 @@ module.exports.index = async (event, context) => {
     ]);
     const result = await page.content();
     const responseHeaders = response.headers();
-    // const zipped = await gzip(result);
     const headers = {
       "x-prerender-time": elapsedTime(start).milliseconds,
       "cache-control":
         responseHeaders["cache-control"] ||
         "max-age=0,no-cache,no-store,must-revalidate",
-      // "content-encoding": "gzip",
       "content-type": responseHeaders["content-type"],
       "last-modified": responseHeaders["last-modified"],
       "x-cache": responseHeaders["x-cache"],
@@ -87,11 +80,9 @@ module.exports.index = async (event, context) => {
   } catch (e) {
     console.log(e, e.message, e.stack);
     return {
-      statusCode: 500
+      statusCode: 500,
     };
-  }
-  finally{
-    if(browser)
-      await browser.close();
+  } finally {
+    if (browser) await browser.close();
   }
 };
