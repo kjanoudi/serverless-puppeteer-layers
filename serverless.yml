@@ -5,6 +5,8 @@ provider:
   runtime: nodejs10.x
   region: us-east-1
   profile: cheddarup
+  apiGateway:
+    minimumCompressionSize: 0
 
 package:
   exclude:
@@ -31,6 +33,16 @@ functions:
           method: GET
           path: /screenshot
           contentHandling: CONVERT_TO_BINARY
+    layers:
+      - { Ref: ChromeLambdaLayer }
+  puppeteer-prerender:
+    handler: prerender.index
+    timeout: 30
+    memorySize: 2048
+    events:
+      - http:
+          method: GET
+          path: /prerender
     layers:
       - { Ref: ChromeLambdaLayer }
 
