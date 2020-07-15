@@ -27,7 +27,7 @@ functions:
   puppeteer-orchestrator:
     handler: handler.index
     timeout: 30
-    memorySize: 2048
+    memorySize: 1536
     events:
       - http:
           method: GET
@@ -38,7 +38,7 @@ functions:
   puppeteer-prerender:
     handler: prerender.index
     timeout: 30
-    memorySize: 2048
+    memorySize: 1536
     events:
       - http:
           method: GET
